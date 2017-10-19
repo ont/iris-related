@@ -14,7 +14,11 @@ func Get(ctx context.Context) *logrus.Entry {
 // Serve middleware and prepare logger for each request's context.
 // Usage: app.Use(logging.Middleware)
 func Middleware(ctx context.Context) {
-	logger := logrus.WithField("request-id", requestid.Get(ctx))
-	ctx.Values().Set("logger", logger)
+	logger := logrus.New()
+	logger.Formatter = &logrus.JSONFormatter{}
+
+	entry := logger.WithField("request-id", requestid.Get(ctx))
+
+	ctx.Values().Set("logger", entry)
 	ctx.Next() // all ok, call other middlewares
 }
