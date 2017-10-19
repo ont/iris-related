@@ -2,8 +2,8 @@ package logging
 
 import (
 	"github.com/kataras/iris/context"
+	"github.com/ont/iris-related/middlewares/requestid"
 	"github.com/sirupsen/logrus"
-	"server/middlewares/requestid"
 )
 
 // Returns logger from context.
