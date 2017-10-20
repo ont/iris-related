@@ -1,6 +1,7 @@
 package logging
 
 import (
+	"fmt"
 	"github.com/kataras/iris/context"
 	"github.com/ont/iris-related/middlewares/requestid"
 	"github.com/sirupsen/logrus"
@@ -11,14 +12,25 @@ func Get(ctx context.Context) *logrus.Entry {
 	return ctx.Values().Get("logger").(*logrus.Entry)
 }
 
-// Serve middleware and prepare logger for each request's context.
-// Usage: app.Use(logging.Middleware)
-func Middleware(ctx context.Context) {
+// Prepares logger and generates middleware handler.
+// Usage: app.Use(logging.Middleware(logrus.JSONFormatter{}))
+func Middleware(formatter logrus.Formatter) context.Handler {
+	installed := false
+
 	logger := logrus.New()
-	logger.Formatter = &logrus.JSONFormatter{}
+	logger.Formatter = formatter
 
-	entry := logger.WithField("request-id", requestid.Get(ctx))
+	return func(ctx context.Context) {
+		// TODO: refactor "installed" check
+		if !installed {
+			fmt.Println("installed check")
+			ctx.Application().Logger().Install(logger)
+			installed = true
+		}
 
-	ctx.Values().Set("logger", entry)
-	ctx.Next() // all ok, call other middlewares
+		entry := logger.WithField("request-id", requestid.Get(ctx))
+
+		ctx.Values().Set("logger", entry)
+		ctx.Next() // all ok, call other middlewares
+	}
 }
