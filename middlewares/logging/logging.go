@@ -23,7 +23,6 @@ func Middleware(formatter logrus.Formatter) context.Handler {
 	return func(ctx context.Context) {
 		// TODO: refactor "installed" check
 		if !installed {
-			fmt.Println("installed check")
 			ctx.Application().Logger().Install(logger)
 			installed = true
 		}
