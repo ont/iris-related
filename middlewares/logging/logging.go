@@ -1,7 +1,6 @@
 package logging
 
 import (
-	"fmt"
 	"github.com/kataras/iris/context"
 	"github.com/ont/iris-related/middlewares/requestid"
 	"github.com/sirupsen/logrus"
