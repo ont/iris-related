@@ -31,7 +31,7 @@ func getRequestId(ctx context.Context) string {
 
 // Generates random md5-like string.
 func genRand() string {
-	bytes := make([]byte, 8)
+	bytes := make([]byte, 16)
 	rand.Read(bytes)
 	return hex.EncodeToString(bytes)
 }
