@@ -33,5 +33,5 @@ func getRequestId(ctx context.Context) string {
 func genRand() string {
 	bytes := make([]byte, 16)
 	rand.Read(bytes)
-	return hex.EncodeToString(bytes)
+	return hex.EncodeToString(bytes) + "-generated"
 }
