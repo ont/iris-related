@@ -41,7 +41,7 @@ func (c *Client) GET(url string) (string, error) {
 		return "", err
 	}
 
-	return c.doRequest("GET", url, nil)
+	return c.doRequest("GET", url, nil, nil)
 }
 
 // simple version of POST for sending ...
@@ -57,10 +57,12 @@ func (c *Client) POST(url string, data map[string]interface{}) (string, error) {
 		form.Add(k, fmt.Sprintf("%v", v))
 	}
 
-	return c.doRequest("POST", url, bytes.NewBufferString(form.Encode()))
+	return c.doRequest("POST", url, bytes.NewBufferString(form.Encode()), map[string]string{
+		"Content-Type": "application/x-www-form-urlencoded",
+	})
 }
 
-func (c *Client) doRequest(method string, url string, data io.Reader) (string, error) {
+func (c *Client) doRequest(method string, url string, data io.Reader, headers map[string]string) (string, error) {
 	c.log.WithField("http_method", method).Debugf("Request to %s", url)
 
 	req, err := http.NewRequest(method, url, data)
@@ -70,6 +72,10 @@ func (c *Client) doRequest(method string, url string, data io.Reader) (string, e
 
 	// TODO: headers for json (separate method doJsonRequest?)
 	req.Header.Set("X-Request-Id", c.requestId) // add Request-Id for each request
+
+	for name, value := range headers {
+		req.Header.Add(name, value)
+	}
 
 	client := &http.Client{
 		Timeout: 10 * time.Second, // NOTE: very important (default timeout is infinite)
