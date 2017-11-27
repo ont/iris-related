@@ -15,8 +15,13 @@ func Get(ctx context.Context) *logrus.Entry {
 	return ctx.Values().Get("logger").(*logrus.Entry)
 }
 
+// Logs fatal error and stops program
 func Fatalf(message string, args ...interface{}) {
 	logger.Fatalf(message, args...)
+}
+
+func Infof(message string, args ...interface{}) {
+	logger.Infof(message, args...)
 }
 
 // Prepares logger and generates middleware handler.
@@ -32,9 +37,10 @@ func Middleware(formatter logrus.Formatter) context.Handler {
 			installed = true
 		}
 
+		// The main purpose of this middleware: setup logger entry with preconfigured request-id output
 		entry := logger.WithField("request-id", requestid.Get(ctx))
-
 		ctx.Values().Set("logger", entry)
+
 		ctx.Next() // all ok, call other middlewares
 	}
 }
