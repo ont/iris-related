@@ -38,7 +38,7 @@ func Middleware(formatter logrus.Formatter) context.Handler {
 		}
 
 		// The main purpose of this middleware: setup logger entry with preconfigured request-id output
-		entry := logger.WithField("request-id", requestid.Get(ctx))
+		entry := logger.WithField("request_id", requestid.Get(ctx))
 		ctx.Values().Set("logger", entry)
 
 		ctx.Next() // all ok, call other middlewares
