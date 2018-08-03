@@ -1,6 +1,8 @@
 package opentracing
 
 import (
+	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"runtime/debug"
@@ -81,6 +83,15 @@ func NewTracerFromEnv() (opentracing.Tracer, io.Closer) {
 	}
 
 	return tracer, closer
+}
+
+func Jsonify(value interface{}) string {
+	bytes, err := json.Marshal(value)
+	if err != nil {
+		return fmt.Sprintf("%v", value)
+	}
+
+	return string(bytes)
 }
 
 func init() {
