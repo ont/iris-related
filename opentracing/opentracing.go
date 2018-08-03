@@ -33,19 +33,19 @@ func Middleware(ctx context.Context) {
 
 	var span opentracing.Span
 	if err != nil {
-		span = tracer.StartSpan("got request")
-	} else {
-		span = tracer.StartSpan("got request", opentracing.ChildOf(spanCtx))
-	}
+		span = tracer.StartSpan("HTTP request")
 
-	if err != opentracing.ErrSpanContextNotFound {
-		span.SetTag("error", true)
-		span.LogKV(
-			"event", "error",
-			"error", err.Error(),
-		)
-		ctx.StatusCode(iris.StatusBadRequest)
-		ctx.StopExecution()
+		if err != opentracing.ErrSpanContextNotFound {
+			span.SetTag("error", true)
+			span.LogKV(
+				"event", "error",
+				"error", err.Error(),
+			)
+			ctx.StatusCode(iris.StatusBadRequest)
+			ctx.StopExecution()
+		}
+	} else {
+		span = tracer.StartSpan("HTTP request", opentracing.ChildOf(spanCtx))
 	}
 
 	traceCtx := opentracing.ContextWithSpan(gocontext.Background(), span)
