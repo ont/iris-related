@@ -21,6 +21,7 @@ var (
 )
 
 func GetContextFrom(ctx context.Context) gocontext.Context {
+	// TODO: fix crash when Middleware wasn't added to app.UseGlobal(...)
 	return ctx.Values().Get("opentrace-ctx").(gocontext.Context)
 }
 
@@ -47,7 +48,7 @@ func Middleware(ctx context.Context) {
 			ctx.StopExecution()
 		}
 	} else {
-		span = tracer.StartSpan("HTTP request", opentracing.ChildOf(spanCtx))
+		span = tracer.StartSpan(fmt.Sprintf("HTTP request (%s: %s)", ctx.Method(), ctx.Path()), opentracing.ChildOf(spanCtx))
 	}
 
 	traceCtx := opentracing.ContextWithSpan(gocontext.Background(), span)
