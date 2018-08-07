@@ -35,8 +35,10 @@ func Middleware(ctx context.Context) {
 	spanCtx, err := tracer.Extract(opentracing.HTTPHeaders, carrier)
 
 	var span opentracing.Span
+
+	spanName := fmt.Sprintf("HTTP request (%s: %s)", ctx.Method(), ctx.Path())
 	if err != nil {
-		span = tracer.StartSpan("HTTP request")
+		span = tracer.StartSpan(spanName)
 
 		if err != opentracing.ErrSpanContextNotFound {
 			span.SetTag("error", true)
@@ -48,7 +50,7 @@ func Middleware(ctx context.Context) {
 			ctx.StopExecution()
 		}
 	} else {
-		span = tracer.StartSpan(fmt.Sprintf("HTTP request (%s: %s)", ctx.Method(), ctx.Path()), opentracing.ChildOf(spanCtx))
+		span = tracer.StartSpan(spanName, opentracing.ChildOf(spanCtx))
 	}
 
 	traceCtx := opentracing.ContextWithSpan(gocontext.Background(), span)
