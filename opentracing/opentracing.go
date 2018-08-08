@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"regexp"
 	"runtime/debug"
 
 	gocontext "context"
@@ -18,6 +19,10 @@ import (
 var (
 	tracer opentracing.Tracer
 	closer io.Closer
+
+	reNum  *regexp.Regexp
+	reUuid *regexp.Regexp
+	reHash *regexp.Regexp
 )
 
 func GetContextFrom(ctx context.Context) gocontext.Context {
@@ -36,7 +41,12 @@ func Middleware(ctx context.Context) {
 
 	var span opentracing.Span
 
-	spanName := fmt.Sprintf("HTTP request (%s: %s)", ctx.Method(), ctx.Path())
+	path := reNum.ReplaceAllString(ctx.Path(), "{num}")
+	path = reUuid.ReplaceAllString(path, "{uuid}")
+	path = reHash.ReplaceAllString(path, "{hash}")
+
+	spanName := fmt.Sprintf("HTTP request (%s: %s)", ctx.Method(), path)
+
 	if err != nil {
 		span = tracer.StartSpan(spanName)
 
@@ -100,4 +110,8 @@ func Jsonify(value interface{}) string {
 func init() {
 	tracer, closer = NewTracerFromEnv()
 	opentracing.SetGlobalTracer(tracer)
+
+	reNum = regexp.MustCompile(`\d+`)
+	reUuid = regexp.MustCompile(`[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}`)
+	reHash = regexp.MustCompile(`[0-9a-f]{32}`)
 }
