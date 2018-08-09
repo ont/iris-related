@@ -50,10 +50,26 @@ func (c *Client) WithTrace(traceCtx gocontext.Context) *Client {
 }
 
 // simple version of GET which only returns response body for 2xx response codes (and follows redirects)
-func (c *Client) GET(url string) (string, error) {
+func (c *Client) GET(url string, params ...interface{}) (string, error) {
 	url, err := c.joinBaseUrl(url)
 	if err != nil {
 		return "", err
+	}
+
+	vs := urllib.Values{}
+	for i := 0; i < len(params); i += 2 {
+		iname := params[i]
+		ivalue := params[i+1]
+
+		if name, ok := iname.(string); ok {
+			vs.Add(name, fmt.Sprintf("%v", ivalue))
+		} else {
+			return "", fmt.Errorf("parameter name %v is not string", iname)
+		}
+	}
+
+	if len(params) >= 2 {
+		url += "?" + vs.Encode()
 	}
 
 	return c.doRequest("GET", url, "", nil)
