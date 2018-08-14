@@ -103,10 +103,7 @@ func (c *Client) doRequest(method string, url string, data string, headers map[s
 
 	c.log.WithField("http_method", method).Debugf("Request to %s", url)
 
-	var buffer *bytes.Buffer
-	if data != "" {
-		buffer = bytes.NewBufferString(data)
-	}
+	buffer := bytes.NewBufferString(data)
 
 	req, err := http.NewRequest(method, url, buffer)
 	if err != nil {
