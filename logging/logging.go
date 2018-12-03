@@ -1,6 +1,9 @@
 package logging
 
 import (
+	"crypto/rand"
+	"fmt"
+
 	"github.com/kataras/iris/context"
 	"github.com/ont/iris-related/requestid"
 	"github.com/sirupsen/logrus"
@@ -9,6 +12,18 @@ import (
 var (
 	logger *logrus.Logger
 )
+
+// Returns logger with random request-id pregenerated
+func Generate() *logrus.Entry {
+	return logger.WithField("request_id", randToken())
+}
+
+// SEE: https://stackoverflow.com/a/25431798
+func randToken() string {
+	b := make([]byte, 8)
+	rand.Read(b)
+	return fmt.Sprintf("%x", b)
+}
 
 // Returns logger from context.
 func Get(ctx context.Context) *logrus.Entry {
@@ -22,6 +37,10 @@ func Fatalf(message string, args ...interface{}) {
 
 func Infof(message string, args ...interface{}) {
 	logger.Infof(message, args...)
+}
+
+func Errorf(message string, args ...interface{}) {
+	logger.Errorf(message, args...)
 }
 
 // Prepares logger and generates middleware handler.
