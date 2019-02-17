@@ -166,6 +166,11 @@ func (c *Client) doRequest(method string, url string, data string, headers map[s
 	c.log.Debug("response Status: ", resp.Status)
 	c.log.Debug("response Headers: ", resp.Header)
 
+	// check for http-code errors
+	if resp.StatusCode != 200 {
+		return "", fmt.Errorf("non 200 http code: %d", resp.StatusCode)
+	}
+
 	bytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
