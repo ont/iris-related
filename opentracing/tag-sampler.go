@@ -51,6 +51,6 @@ func (t *TagSampler) OnSetTag(span *jaeger.Span, key string, value interface{}) 
 	return undecidedDecision
 }
 
-func (s *TagMatchingSampler) OnFinishSpan(span *jaeger.Span) jaeger.SamplingDecision {
+func (s *TagSampler) OnFinishSpan(span *jaeger.Span) jaeger.SamplingDecision {
 	return undecidedDecision
 }

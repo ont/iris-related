@@ -25,6 +25,11 @@ var (
 	reHash *regexp.Regexp
 )
 
+// func StartRootSpan(spanName string) (opentracing.Span, gocontext.Context) {
+// 	span = tracer.StartSpan(spanName, opentracing.ChildOf(spanCtx))
+// 	traceCtx := opentracing.ContextWithSpan(gocontext.Background(), span)
+// }
+
 func GetContextFrom(ctx context.Context) gocontext.Context {
 	// TODO: fix crash when Middleware wasn't added to app.UseGlobal(...)
 	return ctx.Values().Get("opentrace-ctx").(gocontext.Context)
@@ -105,6 +110,16 @@ func Jsonify(value interface{}) string {
 	}
 
 	return string(bytes)
+}
+
+// TODO: rewrite whole module:
+//	- remove init() function
+//  - create middleware object instead of Middleware function
+//  - move global tracer into middleware object
+//  - delete this function
+func SetTracer(tracer opentracing.Tracer, closer io.Closer) {
+	tracer = tracer
+	closer = closer
 }
 
 func init() {
