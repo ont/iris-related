@@ -117,9 +117,10 @@ func Jsonify(value interface{}) string {
 //  - create middleware object instead of Middleware function
 //  - move global tracer into middleware object
 //  - delete this function
-func SetTracer(tracer opentracing.Tracer, closer io.Closer) {
-	tracer = tracer
-	closer = closer
+func SetTracer(t opentracing.Tracer, c io.Closer) {
+	tracer = t
+	closer = c
+	opentracing.SetGlobalTracer(tracer)
 }
 
 func init() {
