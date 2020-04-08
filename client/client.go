@@ -11,7 +11,7 @@ import (
 
 	gocontext "context"
 
-	iriscontext "github.com/kataras/iris/context"
+	iriscontext "github.com/kataras/iris/v12/context"
 	"github.com/ont/iris-related/logging"
 	"github.com/ont/iris-related/requestid"
 	opentracing "github.com/opentracing/opentracing-go"

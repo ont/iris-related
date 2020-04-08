@@ -2,7 +2,7 @@ package requestid
 
 import (
 	"encoding/hex"
-	"github.com/kataras/iris/context"
+	"github.com/kataras/iris/v12/context"
 	"math/rand"
 )
 
