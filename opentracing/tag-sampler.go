@@ -3,7 +3,6 @@ package opentracing
 import (
 	"regexp"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/uber/jaeger-client-go"
 )
 
@@ -81,17 +80,14 @@ func NewTagSampler(matches []TagMatch) *TagSampler {
 }
 
 func (t *TagSampler) OnCreateSpan(span *jaeger.Span) jaeger.SamplingDecision {
-	spew.Println(">> OnCreateSpan")
 	return undecidedDecision
 }
 
 func (t *TagSampler) OnSetOperationName(span *jaeger.Span, operationName string) jaeger.SamplingDecision {
-	spew.Println(">> OnSetOperationName")
 	return undecidedDecision
 }
 
 func (t *TagSampler) OnSetTag(span *jaeger.Span, key string, value interface{}) jaeger.SamplingDecision {
-	spew.Dump(key, value)
 	if matches, found := t.tagMatches[key]; found {
 		for _, match := range matches {
 			if match.Matcher.Check(value) {
@@ -103,12 +99,11 @@ func (t *TagSampler) OnSetTag(span *jaeger.Span, key string, value interface{}) 
 }
 
 func (s *TagSampler) OnFinishSpan(span *jaeger.Span) jaeger.SamplingDecision {
-	spew.Println(">> OnFinishSpan")
 	return undecidedDecision
 }
 
 func (s *TagSampler) Close() {
-	spew.Println(">> Close")
+	return
 }
 
 func (t *TagSampler) jaegerDecision(decision SamplingDecision) jaeger.SamplingDecision {
