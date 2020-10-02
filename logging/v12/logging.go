@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/kataras/iris/v12/context"
-	"github.com/ont/iris-related/requestid"
+	"github.com/ont/iris-related/requestid/v12"
 	"github.com/sirupsen/logrus"
 )
 
