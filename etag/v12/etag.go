@@ -2,7 +2,7 @@ package etag
 
 import (
 	"crypto/sha1"
-	"encoding/base64"
+	"encoding/hex"
 	"fmt"
 
 	"github.com/kataras/iris/v12"
@@ -21,7 +21,7 @@ func Emit(ctx iris.Context) {
 		return
 	}
 
-	hex := base64.URLEncoding.EncodeToString(hasher.Sum(nil))
+	hex := hex.EncodeToString(hasher.Sum(nil))
 	value := fmt.Sprintf("%d-%s", len(body), hex)
 	ctx.Header("ETag", value)
 }
